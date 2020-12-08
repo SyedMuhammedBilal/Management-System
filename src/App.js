@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Switch, useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, useHistory, useParams } from 'react-router-dom';
 
 function App() {
-  const info = data;
-  console.log(info.info)
   return (
     <Router>
       <Switch>
         <Route exact path='/' component={Home} />
-        <Route exact path='/dashboard' component={Dashboard} />
+        <Route exact path='/dashboard/:slug' component={Dashboard} />
       </Switch>
     </Router>
   );
@@ -16,7 +14,28 @@ function App() {
 
 export default App;
 
+const Dashboard = () => {
+  return (
+    <React.Fragment>
+      {
+        Object.keys(data).map((name, index) => {
+          const datas = data[name];
+          return (
+            <div key={index}>
+              <h1>Welcome {datas.name}</h1>
+            </div>
+          )
+        })
+      }
+    </React.Fragment>
+  )
+}
+
 function Home() {
+
+  let { slug } = useParams();
+  const datas = data[slug];
+  // console.table(datas);
 
   const history = useHistory();
 
@@ -33,6 +52,7 @@ function Home() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     const hardCodeData = {
       email: 'test@test.com',
       password: 'test123'
@@ -43,7 +63,12 @@ function Home() {
       (password === data.info01.password || password === data.info02.password)) {
       const token = Math.floor((Math.random() * 1000) * 900);
       sessionStorage.setItem('auth-token', token);
-      history.push('/dashboard')
+      Object.keys(data).map(name => {
+        const datas = data[name]
+        return (
+          history.push(`/dashboard/${datas.name}`)
+        )
+      })
     } else {
       alert('please enter valid email and password');
     }
@@ -64,19 +89,15 @@ function Home() {
   )
 }
 
-const Dashboard = () => {
-  return (
-    <h1>Welcome to Dashboard</h1>
-  )
-}
-
 const data = {
     "info01": {
       email: "test@test.com",
-      password: "1234"
+      password: "1234",
+      name: "Mike"
     },
     "info02": {
       email: "test2@test.com",
-      password: "12345"
+      password: "12345",
+      name: "David"
     }
 }
